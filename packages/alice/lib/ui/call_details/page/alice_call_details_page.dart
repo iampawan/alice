@@ -34,6 +34,7 @@ class AliceCallDetailsPage extends StatefulWidget {
 class _AliceCallDetailsPageState extends State<AliceCallDetailsPage>
     with SingleTickerProviderStateMixin {
   AliceHttpCall get call => widget.call;
+  final GlobalKey _shareButtonKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +79,7 @@ class _AliceCallDetailsPageState extends State<AliceCallDetailsPage>
                       widget.core.configuration.showShareButton
                           ? FloatingActionButton(
                               backgroundColor: AliceTheme.lightRed,
-                              key: const Key('share_key'),
+                              key: _shareButtonKey,
                               onPressed: _shareCall,
                               child: const Icon(
                                 Icons.share,
@@ -106,7 +107,16 @@ class _AliceCallDetailsPageState extends State<AliceCallDetailsPage>
   /// Called when share button has been pressed. It encodes the [widget.call]
   /// and tries to invoke system action to share it.
   void _shareCall() async {
-    await AliceExportHelper.shareCall(context: context, call: widget.call);
+    final RenderBox? box =
+        _shareButtonKey.currentContext?.findRenderObject() as RenderBox?;
+    final Rect? sharePositionOrigin = box != null
+        ? box.localToGlobal(Offset.zero) & box.size
+        : null;
+    await AliceExportHelper.shareCall(
+      context: context,
+      call: widget.call,
+      sharePositionOrigin: sharePositionOrigin,
+    );
   }
 
   /// Get tab name based on [item] type.

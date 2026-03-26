@@ -26,6 +26,7 @@ class AliceExportHelper {
   static Future<AliceExportResult> shareCall({
     required BuildContext context,
     required AliceHttpCall call,
+    Rect? sharePositionOrigin,
   }) async {
     final callLog =
         await AliceExportHelper.buildFullCallLog(call: call, context: context);
@@ -40,6 +41,7 @@ class AliceExportHelper {
     await Share.share(
       callLog,
       subject: context.i18n(AliceTranslationKey.emailSubject),
+      sharePositionOrigin: sharePositionOrigin,
     );
 
     return AliceExportResult(success: true);
